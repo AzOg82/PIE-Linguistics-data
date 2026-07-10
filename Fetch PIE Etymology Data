@@ -1,0 +1,207 @@
+name: Fetch PIE Etymology Data
+
+on:
+  workflow_dispatch:
+    inputs:
+      force_fallback:
+        description: 'Skip the primary source and test the raw-dump fallback path (slow — streams ~2.6GB)'
+        required: false
+        default: 'false'
+
+permissions:
+  contents: write
+
+jobs:
+  fetch-linguistic-data:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Create fetcher script
+        run: |
+          cat > pie_fetcher.js << 'JSEOF'
+          const https = require('https');
+          const zlib = require('zlib');
+          const readline = require('readline');
+          const fs = require('fs');
+          const path = require('path');
+
+          const OUT_DIR = './linguistic_data/pie';
+
+          // Confirmed live on kaikki.org (2026-07-10). The earlier guessed path
+          // (.../words/Proto-Indo-European-Root-all.jsonl) does not exist.
+          // This is the real per-language postprocessed dump, linked from
+          // https://kaikki.org/dictionary/Proto-Indo-European/index.html
+          const PRIMARY_URL = 'https://kaikki.org/dictionary/Proto-Indo-European/kaikki.org-dictionary-ProtoIndoEuropean.jsonl';
+
+          // kaikki has flagged the per-language postprocessed files as deprecated
+          // (github.com/tatuylonen/wiktextract/issues/1178), no removal date given.
+          // This is the documented future-proof alternative: the full raw
+          // wiktextract dump, filtered to lang_code === 'ine-pro' while streaming,
+          // so the 22GB uncompressed dataset never touches disk.
+          const FALLBACK_URL = 'https://kaikki.org/dictionary/raw-wiktextract-data.jsonl.gz';
+          const PIE_LANG_CODE = 'ine-pro';
+          const FORCE_FALLBACK = (process.env.FORCE_FALLBACK || 'false').toLowerCase() === 'true';
+
+          function log(msg) { console.log(`[fetch] ${msg}`); }
+
+          function httpGetStream(url, retries = 3) {
+            return new Promise((resolve, reject) => {
+              const attempt = (n) => {
+                const req = https.get(url, { headers: { 'User-Agent': 'PIE-Fetcher/2.0' } }, res => {
+                  if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
+                    res.resume();
+                    return httpGetStream(res.headers.location, retries).then(resolve).catch(reject);
+                  }
+                  if (res.statusCode !== 200) {
+                    res.resume();
+                    return reject(new Error(`HTTP ${res.statusCode} for ${url}`));
+                  }
+                  resolve(res);
+                });
+                req.on('error', err => {
+                  if (n < retries) {
+                    log(`  retry ${n}/${retries} after error: ${err.message}`);
+                    setTimeout(() => attempt(n + 1), 3000);
+                  } else reject(err);
+                });
+                req.setTimeout(120000, () => { req.destroy(); reject(new Error('Timeout (no data for 120s)')); });
+              };
+              attempt(1);
+            });
+          }
+
+          function httpGetBody(url) {
+            return httpGetStream(url).then(res => new Promise((resolve, reject) => {
+              let data = '';
+              res.on('data', c => data += c);
+              res.on('end', () => resolve(data));
+              res.on('error', reject);
+            }));
+          }
+
+          // Fields confirmed against live kaikki.org PIE entries and the
+          // wiktextract schema docs (github.com/tatuylonen/wiktextract): word,
+          // pos, lang, lang_code, senses[].glosses/categories/tags,
+          // etymology_text, etymology_templates, descendants, forms.
+          // "original_title" (the Reconstruction: page title) is kaikki-specific,
+          // used here only as a fallback if "word" is ever missing.
+          function normalizeEntry(raw) {
+            return {
+              word: raw.word || raw.original_title || '',
+              pos: raw.pos || '',
+              lang: raw.lang || '',
+              langCode: raw.lang_code || '',
+              glosses: (raw.senses || []).flatMap(s => s.glosses || []),
+              senseCategories: (raw.senses || []).flatMap(s => s.categories || []),
+              etymologyText: raw.etymology_text || '',
+              etymologyTemplates: (raw.etymology_templates || []).map(t => ({ name: t.name, args: t.args })),
+              descendants: raw.descendants || [],
+              forms: raw.forms || [],
+              relatedRoots: extractPIERoots(raw.etymology_templates || [])
+            };
+          }
+
+          // PIE roots rarely carry their own etymology (they ARE the root), but
+          // derived/compound PIE entries sometimes cross-reference a root via
+          // {{root|ine-pro|...}}-style templates.
+          function extractPIERoots(templates) {
+            return templates
+              .filter(t => t.name && (t.name.includes('root') || t.name.includes('PIE')))
+              .map(t => t.args ? Object.values(t.args).join(' ') : '')
+              .filter(Boolean);
+          }
+
+          async function fetchPrimary() {
+            log(`Trying primary source: ${PRIMARY_URL}`);
+            const raw = await httpGetBody(PRIMARY_URL);
+            const lines = raw.split('\n').filter(l => l.trim());
+            const entries = lines.map(l => { try { return JSON.parse(l); } catch { return null; } }).filter(Boolean);
+            log(`  primary source returned ${entries.length} entries`);
+            if (entries.length < 100) {
+              throw new Error('Primary source returned suspiciously few entries — treating as unavailable');
+            }
+            return entries;
+          }
+
+          async function fetchFallback() {
+            log(`Falling back to filtered raw dump: ${FALLBACK_URL}`);
+            log('  streaming + filtering for lang_code === "ine-pro" — the 22GB');
+            log('  uncompressed dataset is never written to disk, only matches are kept');
+            const res = await httpGetStream(FALLBACK_URL);
+            const gunzip = zlib.createGunzip();
+            res.pipe(gunzip);
+            const rl = readline.createInterface({ input: gunzip, crlfDelay: Infinity });
+            const entries = [];
+            let scanned = 0;
+            for await (const line of rl) {
+              scanned++;
+              if (!line.trim()) continue;
+              let obj;
+              try { obj = JSON.parse(line); } catch { continue; }
+              if (obj.lang_code === PIE_LANG_CODE) entries.push(obj);
+              if (scanned % 500000 === 0) log(`  scanned ${scanned.toLocaleString()} lines, matched ${entries.length} so far`);
+            }
+            log(`  scan complete: ${scanned.toLocaleString()} lines scanned, ${entries.length} PIE entries matched`);
+            return entries;
+          }
+
+          async function main() {
+            log('PIE Linguistic Data Fetcher v2');
+            log('================================================');
+            if (!fs.existsSync(OUT_DIR)) fs.mkdirSync(OUT_DIR, { recursive: true });
+
+            let rawEntries;
+            let source;
+            if (FORCE_FALLBACK) {
+              log('FORCE_FALLBACK=true — skipping primary source');
+              rawEntries = await fetchFallback();
+              source = 'fallback (forced)';
+            } else {
+              try {
+                rawEntries = await fetchPrimary();
+                source = 'primary';
+              } catch (e) {
+                log(`  primary source failed: ${e.message}`);
+                rawEntries = await fetchFallback();
+                source = 'fallback';
+              }
+            }
+
+            const normalized = rawEntries.map(normalizeEntry);
+            const outPath = path.join(OUT_DIR, 'pie_roots.json');
+            fs.writeFileSync(outPath, JSON.stringify({
+              fetched: new Date().toISOString(),
+              source,
+              count: normalized.length,
+              entries: normalized
+            }));
+            const kb = (fs.statSync(outPath).size / 1024).toFixed(1);
+            log(`\n✓ ${outPath} (${kb} KB) — ${normalized.length} entries, source: ${source}`);
+          }
+
+          main().catch(e => { console.error('Fatal:', e); process.exit(1); });
+          JSEOF
+
+      - name: Run fetcher
+        env:
+          FORCE_FALLBACK: ${{ github.event.inputs.force_fallback || 'false' }}
+        run: node pie_fetcher.js
+
+      - name: Commit data
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add linguistic_data/
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Fetch PIE linguistic data [skip ci]"
+            git push
+          fi
