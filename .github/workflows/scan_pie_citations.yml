@@ -1,0 +1,137 @@
+name: Scan PIE Root Citations
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  scan-citations:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Create scanner script
+        run: |
+          cat > scan_pie_citations.js << 'JSEOF'
+          const https = require('https');
+          const zlib = require('zlib');
+          const readline = require('readline');
+          const fs = require('fs');
+          const path = require('path');
+
+          const DUMP_URL = 'https://kaikki.org/dictionary/raw-wiktextract-data.jsonl.gz';
+          const OUT_DIR = './linguistic_data/pie';
+          const OUT_PATH = path.join(OUT_DIR, 'pie_citations.jsonl');
+
+          function log(msg) { console.log(`[scan] ${msg}`); }
+
+          function httpGetStream(url, retries = 3) {
+            return new Promise((resolve, reject) => {
+              const attempt = (n) => {
+                const req = https.get(url, { headers: { 'User-Agent': 'PIE-Citation-Scanner/1.0' } }, res => {
+                  if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
+                    res.resume();
+                    return httpGetStream(res.headers.location, retries).then(resolve).catch(reject);
+                  }
+                  if (res.statusCode !== 200) {
+                    res.resume();
+                    return reject(new Error(`HTTP ${res.statusCode} for ${url}`));
+                  }
+                  resolve(res);
+                });
+                req.on('error', err => {
+                  if (n < retries) {
+                    log(`  retry ${n}/${retries} after error: ${err.message}`);
+                    setTimeout(() => attempt(n + 1), 3000);
+                  } else reject(err);
+                });
+                req.setTimeout(120000, () => { req.destroy(); reject(new Error('Timeout (no data for 120s)')); });
+              };
+              attempt(1);
+            });
+          }
+
+          // Tested against real kaikki entries (metaconcept -> *keh₂p-,
+          // wahmbulance -> *h₂elh₂- (wander)) before this workflow was written.
+          function extractPieRootCitation(entry) {
+            const templates = entry.etymology_templates || [];
+            const hit = templates.find(t => t.name === 'root' && t.args && t.args['2'] === 'ine-pro');
+            if (!hit) return null;
+            return {
+              word: entry.word,
+              lang: entry.lang,
+              lang_code: entry.lang_code,
+              cited_root: hit.args['3']
+            };
+          }
+
+          async function main() {
+            log('Starting scan of full combined wiktextract dump...');
+            if (!fs.existsSync(OUT_DIR)) fs.mkdirSync(OUT_DIR, { recursive: true });
+
+            const res = await httpGetStream(DUMP_URL);
+            const gunzip = zlib.createGunzip();
+            res.pipe(gunzip);
+            const rl = readline.createInterface({ input: gunzip, crlfDelay: Infinity });
+
+            const out = fs.createWriteStream(OUT_PATH);
+            const langCounts = {};
+            let scanned = 0;
+            let matched = 0;
+
+            for await (const line of rl) {
+              scanned++;
+              if (!line.trim()) continue;
+              let entry;
+              try { entry = JSON.parse(line); } catch { continue; }
+              const hit = extractPieRootCitation(entry);
+              if (hit) {
+                matched++;
+                const key = hit.lang || hit.lang_code || '?';
+                langCounts[key] = (langCounts[key] || 0) + 1;
+                out.write(JSON.stringify(hit) + '\n');
+              }
+              if (scanned % 1000000 === 0) {
+                log(`  scanned ${scanned.toLocaleString()} lines, ${matched.toLocaleString()} citations so far`);
+              }
+            }
+
+            out.end();
+            log(`Done. Scanned ${scanned.toLocaleString()} lines, found ${matched.toLocaleString()} citations.`);
+
+            const summary = Object.entries(langCounts).sort((a, b) => b[1] - a[1]);
+            const summaryPath = path.join(OUT_DIR, 'pie_citations_summary.json');
+            fs.writeFileSync(summaryPath, JSON.stringify({
+              fetched: new Date().toISOString(),
+              lines_scanned: scanned,
+              citations_found: matched,
+              by_language: summary
+            }, null, 2));
+            log(`Summary written to ${summaryPath}`);
+          }
+
+          main().catch(e => { console.error('Fatal:', e); process.exit(1); });
+          JSEOF
+
+      - name: Run scanner
+        run: node scan_pie_citations.js
+
+      - name: Commit results
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add linguistic_data/
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Scan PIE root citations [skip ci]"
+            git push
+          fi
