@@ -1,0 +1,69 @@
+{
+  "built": "2026-07-16T22:31:13.652Z",
+  "total_citations": 37378,
+  "matched": 34943,
+  "unmatched": 2435,
+  "match_rate": 0.9348547273797421,
+  "by_branch": [
+    [
+      "Germanic",
+      17638
+    ],
+    [
+      "Celtic",
+      4037
+    ],
+    [
+      "Italic",
+      4024
+    ],
+    [
+      "Indo-Aryan",
+      3458
+    ],
+    [
+      "Slavic",
+      2165
+    ],
+    [
+      "Hellenic",
+      1539
+    ],
+    [
+      "Unclassified",
+      1076
+    ],
+    [
+      "Iranian",
+      285
+    ],
+    [
+      "Baltic",
+      196
+    ],
+    [
+      "Indo-Iranian",
+      189
+    ],
+    [
+      "Armenian",
+      149
+    ],
+    [
+      "Albanian",
+      74
+    ],
+    [
+      "Tocharian",
+      74
+    ],
+    [
+      "Anatolian",
+      38
+    ],
+    [
+      "Phrygian",
+      1
+    ]
+  ]
+}
