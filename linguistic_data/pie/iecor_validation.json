@@ -1,0 +1,1437 @@
+{
+  "validated": "2026-07-16T22:41:15.137Z",
+  "matrix_distinct_roots": 671,
+  "iecor_distinct_roots": 732,
+  "matched": 375,
+  "match_rate": 0.5122950819672131,
+  "misses": [
+    {
+      "form": "?*⁽g̑⁾ʰeHb-",
+      "gloss": ""
+    },
+    {
+      "form": "?*(s)k⁽ʷ⁾rei̯-",
+      "gloss": ""
+    },
+    {
+      "form": "?*(s)k̑ed-",
+      "gloss": ""
+    },
+    {
+      "form": "?*(s)krei̯t-",
+      "gloss": ""
+    },
+    {
+      "form": "?*(s)melH-",
+      "gloss": ""
+    },
+    {
+      "form": "?*bʰar(s)-",
+      "gloss": ""
+    },
+    {
+      "form": "?*bʰleu̯dh₂-",
+      "gloss": ""
+    },
+    {
+      "form": "?*bʰrend-",
+      "gloss": ""
+    },
+    {
+      "form": "?*bʰreu̯k̑-",
+      "gloss": ""
+    },
+    {
+      "form": "?*dens-",
+      "gloss": ""
+    },
+    {
+      "form": "?*dʰreu̯s-",
+      "gloss": ""
+    },
+    {
+      "form": "?*dreh₁-",
+      "gloss": ""
+    },
+    {
+      "form": "?*g⁽ʷ⁾eg̑ʰ-",
+      "gloss": ""
+    },
+    {
+      "form": "?*g̑ʰéi̯-om, *g̑ʰ(i)i̯-ém-, *g̑ʰi-m-",
+      "gloss": ""
+    },
+    {
+      "form": "?*gʰeu̯bʰ-",
+      "gloss": ""
+    },
+    {
+      "form": "?*gʰrei̯dʰ-",
+      "gloss": ""
+    },
+    {
+      "form": "?*g̑ʰu̯oi̯-",
+      "gloss": ""
+    },
+    {
+      "form": "?*gleh₁bʰ-",
+      "gloss": ""
+    },
+    {
+      "form": "?*gnet-",
+      "gloss": ""
+    },
+    {
+      "form": "?*greng̑ʰ-",
+      "gloss": ""
+    },
+    {
+      "form": "?*h₁ai̯-",
+      "gloss": ""
+    },
+    {
+      "form": "?*h₂em-",
+      "gloss": ""
+    },
+    {
+      "form": "?*h₂u̯ei̯d-",
+      "gloss": ""
+    },
+    {
+      "form": "?*h₂u̯ei̯s-",
+      "gloss": ""
+    },
+    {
+      "form": "?*h₂u̯erH-",
+      "gloss": ""
+    },
+    {
+      "form": "?*He⁽k̑⁾-",
+      "gloss": ""
+    },
+    {
+      "form": "?*i̯eu̯t-",
+      "gloss": ""
+    },
+    {
+      "form": "?*kamp-",
+      "gloss": ""
+    },
+    {
+      "form": "?*k̑atu-",
+      "gloss": ""
+    },
+    {
+      "form": "?*Ki̯eh₂p-",
+      "gloss": ""
+    },
+    {
+      "form": "?*krengʰ-",
+      "gloss": ""
+    },
+    {
+      "form": "?*kreu̯-",
+      "gloss": ""
+    },
+    {
+      "form": "?*kʷu̯ap-",
+      "gloss": ""
+    },
+    {
+      "form": "?*lū̆-",
+      "gloss": ""
+    },
+    {
+      "form": "?*meHd-",
+      "gloss": ""
+    },
+    {
+      "form": "?*mergʷ-",
+      "gloss": ""
+    },
+    {
+      "form": "?*meth₂-",
+      "gloss": ""
+    },
+    {
+      "form": "?*meu̯H-",
+      "gloss": ""
+    },
+    {
+      "form": "?*mogʰu-",
+      "gloss": ""
+    },
+    {
+      "form": "?*muH-",
+      "gloss": ""
+    },
+    {
+      "form": "?*neh₃d-",
+      "gloss": ""
+    },
+    {
+      "form": "?*pē(n)s-",
+      "gloss": ""
+    },
+    {
+      "form": "?*pel(h₁)-",
+      "gloss": "flare up"
+    },
+    {
+      "form": "?*pert-",
+      "gloss": ""
+    },
+    {
+      "form": "?*seh₂(i̯)-",
+      "gloss": ""
+    },
+    {
+      "form": "?*seu̯k-",
+      "gloss": ""
+    },
+    {
+      "form": "?*skeh₂p-",
+      "gloss": ""
+    },
+    {
+      "form": "?*skeu̯bʰ-",
+      "gloss": ""
+    },
+    {
+      "form": "?*slak-",
+      "gloss": ""
+    },
+    {
+      "form": "?*smei̯d-",
+      "gloss": ""
+    },
+    {
+      "form": "?*spei̯d-",
+      "gloss": ""
+    },
+    {
+      "form": "?*stemH-",
+      "gloss": ""
+    },
+    {
+      "form": "?*stobʰ-ó-",
+      "gloss": ""
+    },
+    {
+      "form": "?*treh₁-",
+      "gloss": ""
+    },
+    {
+      "form": "?*u̯e-k⁽ʷ⁾sp-ero-",
+      "gloss": ""
+    },
+    {
+      "form": "?*u̯reh₂d-",
+      "gloss": ""
+    },
+    {
+      "form": "*(H)i̯eh₂-",
+      "gloss": ""
+    },
+    {
+      "form": "*(H)i̯ekʷ-r/n-",
+      "gloss": ""
+    },
+    {
+      "form": "*(H)nā̆s-",
+      "gloss": ""
+    },
+    {
+      "form": "*(H)regʰ-",
+      "gloss": ""
+    },
+    {
+      "form": "*(H)rei̯dʰ-",
+      "gloss": ""
+    },
+    {
+      "form": "*(H)seu̯-",
+      "gloss": ""
+    },
+    {
+      "form": "*(H)u̯ed-",
+      "gloss": ""
+    },
+    {
+      "form": "*(h₁)ner-",
+      "gloss": ""
+    },
+    {
+      "form": "*(h₁)rei̯k⁽ʷ⁾(h₂)-",
+      "gloss": ""
+    },
+    {
+      "form": "*(h₁)res-",
+      "gloss": ""
+    },
+    {
+      "form": "*(h₂)u̯elk-",
+      "gloss": ""
+    },
+    {
+      "form": "*⁽k̑⁾an-",
+      "gloss": ""
+    },
+    {
+      "form": "*⁽k̑⁾eh₂i̯-",
+      "gloss": ""
+    },
+    {
+      "form": "*⁽k̑⁾u(H)-",
+      "gloss": ""
+    },
+    {
+      "form": "*(s)dʰerbʰ-",
+      "gloss": ""
+    },
+    {
+      "form": "*(s)kedh₂-",
+      "gloss": ""
+    },
+    {
+      "form": "*(s)ken(H)-",
+      "gloss": ""
+    },
+    {
+      "form": "*(s)k̑eNs-",
+      "gloss": ""
+    },
+    {
+      "form": "*(s)kep-",
+      "gloss": ""
+    },
+    {
+      "form": "*(s)kerH-",
+      "gloss": ""
+    },
+    {
+      "form": "*(s)kerp-",
+      "gloss": ""
+    },
+    {
+      "form": "*(s)kert-",
+      "gloss": ""
+    },
+    {
+      "form": "*(s)kʷei̯t-",
+      "gloss": ""
+    },
+    {
+      "form": "*(s)leb-",
+      "gloss": ""
+    },
+    {
+      "form": "*(s)legh₂-",
+      "gloss": ""
+    },
+    {
+      "form": "*(s)lei̯-",
+      "gloss": ""
+    },
+    {
+      "form": "*(s)lei̯g̑-",
+      "gloss": ""
+    },
+    {
+      "form": "*(s)neu̯dʰ-",
+      "gloss": ""
+    },
+    {
+      "form": "*(s)re⁽g̑⁾-",
+      "gloss": ""
+    },
+    {
+      "form": "*bʰag-",
+      "gloss": ""
+    },
+    {
+      "form": "*bʰarsdʰó-",
+      "gloss": ""
+    },
+    {
+      "form": "*bʰaski-",
+      "gloss": ""
+    },
+    {
+      "form": "*bʰeh₁dʰ-",
+      "gloss": ""
+    },
+    {
+      "form": "*bʰeh₂g̑ʰu-",
+      "gloss": ""
+    },
+    {
+      "form": "*bʰei̯H-",
+      "gloss": ""
+    },
+    {
+      "form": "*bʰelH-",
+      "gloss": ""
+    },
+    {
+      "form": "*bʰerh₁g̑-",
+      "gloss": ""
+    },
+    {
+      "form": "*bʰes-",
+      "gloss": ""
+    },
+    {
+      "form": "*bʰeu̯t-",
+      "gloss": ""
+    },
+    {
+      "form": "*bʰrenk-",
+      "gloss": ""
+    },
+    {
+      "form": "*bʰresdʰ-",
+      "gloss": ""
+    },
+    {
+      "form": "*bʰudʰ-",
+      "gloss": ""
+    },
+    {
+      "form": "*bʰu̯eh₂-",
+      "gloss": ""
+    },
+    {
+      "form": "*ćau̯dʰ-",
+      "gloss": ""
+    },
+    {
+      "form": "*deh₂u̯-",
+      "gloss": ""
+    },
+    {
+      "form": "*dei̯-",
+      "gloss": ""
+    },
+    {
+      "form": "*déru- ~ *dóru- ~ *dru-",
+      "gloss": ""
+    },
+    {
+      "form": "*dʰalh₁-",
+      "gloss": ""
+    },
+    {
+      "form": "*dʰég̑ʰ-om-, *dʰg̑ʰ-ém-, *dʰg̑ʰ-m-",
+      "gloss": ""
+    },
+    {
+      "form": "*dʰeHbʰ-",
+      "gloss": ""
+    },
+    {
+      "form": "*dʰei̯H-",
+      "gloss": ""
+    },
+    {
+      "form": "*dʰei̯h₂gʷ-",
+      "gloss": ""
+    },
+    {
+      "form": "*dʰen-",
+      "gloss": ""
+    },
+    {
+      "form": "*dʰeu̯H-",
+      "gloss": ""
+    },
+    {
+      "form": "*dʰg̑ʰuH-",
+      "gloss": ""
+    },
+    {
+      "form": "*dʰmeH-",
+      "gloss": ""
+    },
+    {
+      "form": "*dʰrebʰ-",
+      "gloss": ""
+    },
+    {
+      "form": "*dʰreh₂s-",
+      "gloss": ""
+    },
+    {
+      "form": "*dʰu̯ens-",
+      "gloss": ""
+    },
+    {
+      "form": "*dʰugh₂tér-",
+      "gloss": ""
+    },
+    {
+      "form": "*dn̥g̑ʰu̯éh₂-",
+      "gloss": ""
+    },
+    {
+      "form": "*drep-",
+      "gloss": ""
+    },
+    {
+      "form": "*dreu̯-",
+      "gloss": ""
+    },
+    {
+      "form": "*du̯o-, *du̯i-",
+      "gloss": ""
+    },
+    {
+      "form": "*g⁽ʷ⁾eH(i̯)-",
+      "gloss": ""
+    },
+    {
+      "form": "*g̑ar-",
+      "gloss": ""
+    },
+    {
+      "form": "*gei̯bʰ-",
+      "gloss": ""
+    },
+    {
+      "form": "*g̑enu-",
+      "gloss": ""
+    },
+    {
+      "form": "*gʰe-, gʰo-",
+      "gloss": ""
+    },
+    {
+      "form": "*gʰebʰh₂l-",
+      "gloss": ""
+    },
+    {
+      "form": "*g̑ʰeh₁i̯-",
+      "gloss": ""
+    },
+    {
+      "form": "*gʰlend⁽ʰ⁾-",
+      "gloss": ""
+    },
+    {
+      "form": "*g̑ʰnei̯H-",
+      "gloss": ""
+    },
+    {
+      "form": "*gʰosti-poti-",
+      "gloss": ""
+    },
+    {
+      "form": "*gʰrebʰ-",
+      "gloss": ""
+    },
+    {
+      "form": "*gʰrebh₂-",
+      "gloss": ""
+    },
+    {
+      "form": "*gʰreu̯(m)bʰ-",
+      "gloss": ""
+    },
+    {
+      "form": "*gʰreu̯d-",
+      "gloss": ""
+    },
+    {
+      "form": "*g̑ʰu̯eh₁r-",
+      "gloss": ""
+    },
+    {
+      "form": "*g̑ʰu̯eh₂gʰV-",
+      "gloss": ""
+    },
+    {
+      "form": "*g̑ʰu̯el-",
+      "gloss": ""
+    },
+    {
+      "form": "*g̑i̯eu̯H-",
+      "gloss": ""
+    },
+    {
+      "form": "*golH-u̯eh₂",
+      "gloss": ""
+    },
+    {
+      "form": "*g̑ombʰ-o-",
+      "gloss": ""
+    },
+    {
+      "form": "*gu̯osd-",
+      "gloss": ""
+    },
+    {
+      "form": "*gʷeh₁dʰ-",
+      "gloss": ""
+    },
+    {
+      "form": "*gʷelh₁-",
+      "gloss": ""
+    },
+    {
+      "form": "*gʷg̑ʰer-",
+      "gloss": ""
+    },
+    {
+      "form": "*gʷʰei̯H-",
+      "gloss": ""
+    },
+    {
+      "form": "*gʷi̯eh₃-",
+      "gloss": ""
+    },
+    {
+      "form": "*gʷou̯-",
+      "gloss": ""
+    },
+    {
+      "form": "*gʷreu̯Hg̑ʰ-",
+      "gloss": ""
+    },
+    {
+      "form": "*gʷriH-u̯eh₂-",
+      "gloss": ""
+    },
+    {
+      "form": "*h₁erg̑ʰ-",
+      "gloss": ""
+    },
+    {
+      "form": "*h₁erH-",
+      "gloss": ""
+    },
+    {
+      "form": "*h₁ésh₂-r̥, *h₁sh₂-én-",
+      "gloss": ""
+    },
+    {
+      "form": "*h₁eu̯-",
+      "gloss": ""
+    },
+    {
+      "form": "*h₁legʰ-",
+      "gloss": ""
+    },
+    {
+      "form": "*h₁n̥gni-",
+      "gloss": ""
+    },
+    {
+      "form": "*h₁su-",
+      "gloss": ""
+    },
+    {
+      "form": "*h₁u̯erH-",
+      "gloss": ""
+    },
+    {
+      "form": "*h₂ebʰ-",
+      "gloss": ""
+    },
+    {
+      "form": "*h₂edʰ⁽g̑⁾ʰ-",
+      "gloss": ""
+    },
+    {
+      "form": "*h₂egʰl-",
+      "gloss": ""
+    },
+    {
+      "form": "*h₂eh₁s-",
+      "gloss": ""
+    },
+    {
+      "form": "*h₂ei̯-u-, *h₂oi̯-u-, *h₂i̯-eu̯-",
+      "gloss": ""
+    },
+    {
+      "form": "*h₂elbʰ-",
+      "gloss": ""
+    },
+    {
+      "form": "*h₂emg̑ʰ-",
+      "gloss": ""
+    },
+    {
+      "form": "*h₂emH-",
+      "gloss": ""
+    },
+    {
+      "form": "*h₂et-no-",
+      "gloss": ""
+    },
+    {
+      "form": "*h₂eu̯-i-",
+      "gloss": ""
+    },
+    {
+      "form": "*h₂keu̯s-",
+      "gloss": ""
+    },
+    {
+      "form": "*h₂leh₁-",
+      "gloss": ""
+    },
+    {
+      "form": "*h₂leks-",
+      "gloss": ""
+    },
+    {
+      "form": "*h₂merd-",
+      "gloss": ""
+    },
+    {
+      "form": "*h₂ost-",
+      "gloss": ""
+    },
+    {
+      "form": "*h₂ōu̯ió-",
+      "gloss": ""
+    },
+    {
+      "form": "*h₂ster-",
+      "gloss": ""
+    },
+    {
+      "form": "*h₂u̯edH-",
+      "gloss": ""
+    },
+    {
+      "form": "*h₂u̯enh₁-",
+      "gloss": ""
+    },
+    {
+      "form": "*h₂u̯ers-",
+      "gloss": ""
+    },
+    {
+      "form": "*h₃bʰreu̯H-",
+      "gloss": ""
+    },
+    {
+      "form": "*h₃eh₁-",
+      "gloss": ""
+    },
+    {
+      "form": "*h₃ems-",
+      "gloss": ""
+    },
+    {
+      "form": "*h₃erg-",
+      "gloss": ""
+    },
+    {
+      "form": "*h₃eu̯g̑-",
+      "gloss": ""
+    },
+    {
+      "form": "*h₃lei̯g̑-",
+      "gloss": ""
+    },
+    {
+      "form": "*h₃neg⁽ʷ⁾ʰ-",
+      "gloss": ""
+    },
+    {
+      "form": "*Hd-ónt-",
+      "gloss": ""
+    },
+    {
+      "form": "*He(n)gʷʰi-",
+      "gloss": ""
+    },
+    {
+      "form": "*Heh₂m-",
+      "gloss": ""
+    },
+    {
+      "form": "*Hei̯k̑-",
+      "gloss": ""
+    },
+    {
+      "form": "*Hengl-",
+      "gloss": ""
+    },
+    {
+      "form": "*Herd-",
+      "gloss": ""
+    },
+    {
+      "form": "*Hneh₃-mn̥",
+      "gloss": ""
+    },
+    {
+      "form": "*Hoi̯-",
+      "gloss": ""
+    },
+    {
+      "form": "*i̯eg̑-",
+      "gloss": ""
+    },
+    {
+      "form": "*i̯eh₁-r/n-",
+      "gloss": ""
+    },
+    {
+      "form": "*i̯eu̯-",
+      "gloss": ""
+    },
+    {
+      "form": "*i̯o-",
+      "gloss": ""
+    },
+    {
+      "form": "*i̯uHr-",
+      "gloss": ""
+    },
+    {
+      "form": "*k⁽ʷ⁾sep-",
+      "gloss": ""
+    },
+    {
+      "form": "*k̑ad-",
+      "gloss": "'fall'"
+    },
+    {
+      "form": "*k̑eh₁k⁽ʷ⁾o-",
+      "gloss": ""
+    },
+    {
+      "form": "*keh₂p-",
+      "gloss": ""
+    },
+    {
+      "form": "*keh₂u̯-",
+      "gloss": ""
+    },
+    {
+      "form": "*keh₂u̯l(o)-",
+      "gloss": ""
+    },
+    {
+      "form": "*k̑eh₃(i̯)-",
+      "gloss": ""
+    },
+    {
+      "form": "*k̑eHs-",
+      "gloss": ""
+    },
+    {
+      "form": "*k̑ei̯-u̯o-",
+      "gloss": ""
+    },
+    {
+      "form": "*kemb-",
+      "gloss": ""
+    },
+    {
+      "form": "*k̑ent-",
+      "gloss": ""
+    },
+    {
+      "form": "*kerg⁽ʷ⁾ʰ-",
+      "gloss": ""
+    },
+    {
+      "form": "*kerH-",
+      "gloss": ""
+    },
+    {
+      "form": "*k̑eu̯-",
+      "gloss": ""
+    },
+    {
+      "form": "*k̑eu̯H-",
+      "gloss": ""
+    },
+    {
+      "form": "*ki̯(e)h₂-",
+      "gloss": ""
+    },
+    {
+      "form": "*kleh₂ro-",
+      "gloss": "plank"
+    },
+    {
+      "form": "*klemH-",
+      "gloss": ""
+    },
+    {
+      "form": "*k̑leu̯s-",
+      "gloss": ""
+    },
+    {
+      "form": "*k̑lou̯ni-",
+      "gloss": ""
+    },
+    {
+      "form": "*kok̑s-",
+      "gloss": ""
+    },
+    {
+      "form": "*kólso-",
+      "gloss": ""
+    },
+    {
+      "form": "*konh₂m-",
+      "gloss": ""
+    },
+    {
+      "form": "*kor-o-",
+      "gloss": ""
+    },
+    {
+      "form": "*kreh₁(i̯)-",
+      "gloss": ""
+    },
+    {
+      "form": "*k̑rei̯H-",
+      "gloss": ""
+    },
+    {
+      "form": "*kreu̯s-",
+      "gloss": ""
+    },
+    {
+      "form": "*kseu̯-",
+      "gloss": ""
+    },
+    {
+      "form": "*ksneu̯-",
+      "gloss": ""
+    },
+    {
+      "form": "*ksúlo-",
+      "gloss": ""
+    },
+    {
+      "form": "*ku̯ath₂-",
+      "gloss": ""
+    },
+    {
+      "form": "*k̑u̯eh₁-",
+      "gloss": ""
+    },
+    {
+      "form": "*k̑u̯ón-",
+      "gloss": ""
+    },
+    {
+      "form": "*kʷeh₂l-",
+      "gloss": ""
+    },
+    {
+      "form": "*kʷetu̯or-, *kʷ(e)tu̯r̥-, *kʷ(e)tur-",
+      "gloss": ""
+    },
+    {
+      "form": "*kʷi̯eu̯-",
+      "gloss": ""
+    },
+    {
+      "form": "*kʷó-",
+      "gloss": ""
+    },
+    {
+      "form": "*kʷr̥mi-",
+      "gloss": ""
+    },
+    {
+      "form": "*leh₁t-",
+      "gloss": ""
+    },
+    {
+      "form": "*leh₂p-",
+      "gloss": ""
+    },
+    {
+      "form": "*leh₃u̯-",
+      "gloss": ""
+    },
+    {
+      "form": "*lei̯-",
+      "gloss": ""
+    },
+    {
+      "form": "*lei̯H-",
+      "gloss": ""
+    },
+    {
+      "form": "*lembH-",
+      "gloss": ""
+    },
+    {
+      "form": "*lembʰ-",
+      "gloss": ""
+    },
+    {
+      "form": "*lok̑s-",
+      "gloss": ""
+    },
+    {
+      "form": "*mag̑-",
+      "gloss": ""
+    },
+    {
+      "form": "*mánu-s-",
+      "gloss": ""
+    },
+    {
+      "form": "*medʰu-",
+      "gloss": ""
+    },
+    {
+      "form": "*meh₂ter-",
+      "gloss": ""
+    },
+    {
+      "form": "*mei̯gʰ-",
+      "gloss": ""
+    },
+    {
+      "form": "*mei̯H-",
+      "gloss": ""
+    },
+    {
+      "form": "*melh₁-",
+      "gloss": ""
+    },
+    {
+      "form": "*melit-",
+      "gloss": ""
+    },
+    {
+      "form": "*menH-",
+      "gloss": ""
+    },
+    {
+      "form": "*merH-",
+      "gloss": ""
+    },
+    {
+      "form": "*merHk-",
+      "gloss": ""
+    },
+    {
+      "form": "*meu̯h₁-",
+      "gloss": ""
+    },
+    {
+      "form": "*meu̯k-",
+      "gloss": ""
+    },
+    {
+      "form": "*mleu̯h₂-",
+      "gloss": ""
+    },
+    {
+      "form": "*ml̥h₃dʰ-",
+      "gloss": ""
+    },
+    {
+      "form": "*mor-i-",
+      "gloss": ""
+    },
+    {
+      "form": "*moru̯i-",
+      "gloss": ""
+    },
+    {
+      "form": "*mūs",
+      "gloss": ""
+    },
+    {
+      "form": "*n̥-budʰnós",
+      "gloss": ""
+    },
+    {
+      "form": "*ned-",
+      "gloss": ""
+    },
+    {
+      "form": "*neh₂-",
+      "gloss": ""
+    },
+    {
+      "form": "*nei̯-",
+      "gloss": ""
+    },
+    {
+      "form": "*nei̯do-",
+      "gloss": ""
+    },
+    {
+      "form": "*neu̯(H)-",
+      "gloss": ""
+    },
+    {
+      "form": "*p(e)uH-",
+      "gloss": ""
+    },
+    {
+      "form": "*past-",
+      "gloss": ""
+    },
+    {
+      "form": "*pe⁽k̑⁾tu-",
+      "gloss": ""
+    },
+    {
+      "form": "*péh₂-u̯r̥, *ph₂-u̯én-",
+      "gloss": ""
+    },
+    {
+      "form": "*peh₃(i̯)-",
+      "gloss": ""
+    },
+    {
+      "form": "*pei̯H-",
+      "gloss": ""
+    },
+    {
+      "form": "*penkʷe",
+      "gloss": ""
+    },
+    {
+      "form": "*per-u̯n̥-",
+      "gloss": ""
+    },
+    {
+      "form": "*pér-u̯r, *pér-u̯n̥-",
+      "gloss": ""
+    },
+    {
+      "form": "*perh₂-",
+      "gloss": ""
+    },
+    {
+      "form": "*persneh₂-",
+      "gloss": ""
+    },
+    {
+      "form": "*pet-",
+      "gloss": ""
+    },
+    {
+      "form": "*peu̯-",
+      "gloss": ""
+    },
+    {
+      "form": "*peu̯s-",
+      "gloss": ""
+    },
+    {
+      "form": "*pi̯eh₂-",
+      "gloss": ""
+    },
+    {
+      "form": "*pisk-",
+      "gloss": ""
+    },
+    {
+      "form": "*pitu-",
+      "gloss": ""
+    },
+    {
+      "form": "*pleh₂g-",
+      "gloss": ""
+    },
+    {
+      "form": "*pleh₃-",
+      "gloss": ""
+    },
+    {
+      "form": "*pr̥-, *pró, *prí",
+      "gloss": ""
+    },
+    {
+      "form": "*pstḗn",
+      "gloss": ""
+    },
+    {
+      "form": "*pteh₂k-",
+      "gloss": ""
+    },
+    {
+      "form": "*putslo-",
+      "gloss": ""
+    },
+    {
+      "form": "*reh₁dʰ-",
+      "gloss": ""
+    },
+    {
+      "form": "*rei̯⁽g̑⁾-",
+      "gloss": ""
+    },
+    {
+      "form": "*rek-",
+      "gloss": ""
+    },
+    {
+      "form": "*ret-",
+      "gloss": ""
+    },
+    {
+      "form": "*reu̯dH-",
+      "gloss": ""
+    },
+    {
+      "form": "*reu̯H-",
+      "gloss": ""
+    },
+    {
+      "form": "*reu̯h₁-",
+      "gloss": ""
+    },
+    {
+      "form": "*reu̯p-",
+      "gloss": ""
+    },
+    {
+      "form": "*s⁽k̑⁾eH-",
+      "gloss": ""
+    },
+    {
+      "form": "*sal-",
+      "gloss": ""
+    },
+    {
+      "form": "*seh₁dʰ-",
+      "gloss": ""
+    },
+    {
+      "form": "*seh₁p-",
+      "gloss": ""
+    },
+    {
+      "form": "*seh₂-u̯l̥-",
+      "gloss": ""
+    },
+    {
+      "form": "*sekH-",
+      "gloss": ""
+    },
+    {
+      "form": "*selH-",
+      "gloss": ""
+    },
+    {
+      "form": "*sen-",
+      "gloss": ""
+    },
+    {
+      "form": "*sh₂em-",
+      "gloss": ""
+    },
+    {
+      "form": "*sh₂eu̯-",
+      "gloss": ""
+    },
+    {
+      "form": "*slenkʷ-",
+      "gloss": ""
+    },
+    {
+      "form": "*sleu̯k-",
+      "gloss": ""
+    },
+    {
+      "form": "*sneu̯H-",
+      "gloss": ""
+    },
+    {
+      "form": "*sokʷo-",
+      "gloss": ""
+    },
+    {
+      "form": "*sp⁽ʰ⁾erh₂g-",
+      "gloss": ""
+    },
+    {
+      "form": "*sph₂en-",
+      "gloss": ""
+    },
+    {
+      "form": "*srei̯Hg̑-",
+      "gloss": ""
+    },
+    {
+      "form": "*steh₂⁽g̑⁾-",
+      "gloss": ""
+    },
+    {
+      "form": "*steh₃-",
+      "gloss": ""
+    },
+    {
+      "form": "*stembʰH-",
+      "gloss": ""
+    },
+    {
+      "form": "*ster(H)-",
+      "gloss": ""
+    },
+    {
+      "form": "*sti̯eH-",
+      "gloss": ""
+    },
+    {
+      "form": "*sū̆-",
+      "gloss": ""
+    },
+    {
+      "form": "*su̯elg̑-",
+      "gloss": ""
+    },
+    {
+      "form": "*su̯er(H)-",
+      "gloss": ""
+    },
+    {
+      "form": "*su̯ord-o-",
+      "gloss": ""
+    },
+    {
+      "form": "*supo",
+      "gloss": ""
+    },
+    {
+      "form": "*t⁽k̑⁾en-",
+      "gloss": ""
+    },
+    {
+      "form": "*tau̯ro-",
+      "gloss": ""
+    },
+    {
+      "form": "*tegu-",
+      "gloss": ""
+    },
+    {
+      "form": "*teh₂li-",
+      "gloss": ""
+    },
+    {
+      "form": "*telH-",
+      "gloss": ""
+    },
+    {
+      "form": "*temk-",
+      "gloss": ""
+    },
+    {
+      "form": "*tenk-",
+      "gloss": ""
+    },
+    {
+      "form": "*teu̯(h₂)k-",
+      "gloss": ""
+    },
+    {
+      "form": "*to-",
+      "gloss": ""
+    },
+    {
+      "form": "*treh₃⁽g̑⁾-",
+      "gloss": ""
+    },
+    {
+      "form": "*trei̯-",
+      "gloss": ""
+    },
+    {
+      "form": "*treu̯H-",
+      "gloss": ""
+    },
+    {
+      "form": "*tr̥no-",
+      "gloss": ""
+    },
+    {
+      "form": "*tu̯ek-",
+      "gloss": ""
+    },
+    {
+      "form": "*tu̯em-",
+      "gloss": ""
+    },
+    {
+      "form": "*tu̯enk-",
+      "gloss": ""
+    },
+    {
+      "form": "*tu̯er-",
+      "gloss": ""
+    },
+    {
+      "form": "*u̯ā̆stu-",
+      "gloss": ""
+    },
+    {
+      "form": "*u̯edʰ(h₁)-",
+      "gloss": ""
+    },
+    {
+      "form": "*u̯ei̯(H)-",
+      "gloss": ""
+    },
+    {
+      "form": "*u̯elh₂-",
+      "gloss": ""
+    },
+    {
+      "form": "*u̯elk̑-",
+      "gloss": ""
+    },
+    {
+      "form": "*u̯enH-",
+      "gloss": ""
+    },
+    {
+      "form": "*u̯erdʰ-",
+      "gloss": ""
+    },
+    {
+      "form": "*u̯idʰh₁ú-",
+      "gloss": ""
+    },
+    {
+      "form": "*u̯i̯edʰ-",
+      "gloss": ""
+    },
+    {
+      "form": "*u̯iH-ró-",
+      "gloss": ""
+    },
+    {
+      "form": "*u̯ind-",
+      "gloss": ""
+    },
+    {
+      "form": "*u̯ĺ̥kʷo-",
+      "gloss": ""
+    },
+    {
+      "form": "*u̯reh₁-",
+      "gloss": ""
+    },
+    {
+      "form": "*u̯reik̑-",
+      "gloss": ""
+    },
+    {
+      "form": "*u̯r̥mi-",
+      "gloss": ""
+    }
+  ]
+}
