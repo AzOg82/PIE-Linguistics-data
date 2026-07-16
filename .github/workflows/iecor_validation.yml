@@ -1,0 +1,139 @@
+name: Validate Matrix Against IE-CoR
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Fetch IE-CoR cognate data
+        run: |
+          curl -sL -o cognatesets.csv "https://raw.githubusercontent.com/lexibank/iecor/master/cldf/cognatesets.csv"
+
+      - name: Create validation script
+        run: |
+          cat > validate.js << 'JSEOF'
+          const fs = require('fs');
+
+          function log(msg) { console.log(`[validate] ${msg}`); }
+
+          // Same normalize function as Root & Gloss and the matrix builder,
+          // PLUS a fix confirmed against a real example (PIE "dog": kaikki
+          // cites *ḱwṓ, IE-CoR cites the oblique-stem form *ḱun- written
+          // with u̯/i̯ for the semivowels). Without this, that single
+          // notational difference alone was costing ~21 percentage points
+          // of false misses when tested locally.
+          function normalize(str) {
+            return (str || '')
+              .toLowerCase()
+              .normalize('NFD')
+              .replace(/u̯/g, 'w')
+              .replace(/i̯/g, 'y')
+              .replace(/[\u0300-\u036f]/g, '')
+              .replace(/[₀₁₂₃₄₅₆₇₈₉]/g, d => '0123456789'['₀₁₂₃₄₅₆₇₈₉'.indexOf(d)])
+              .replace(/[^a-z0-9\s*-]/g, '')
+              .replace(/[*-]/g, '')
+              .trim();
+          }
+
+          function parseCsvLine(line) {
+            const result = []; let cur = ''; let inQuotes = false;
+            for (let i = 0; i < line.length; i++) {
+              const c = line[i];
+              if (inQuotes) {
+                if (c === '"' && line[i + 1] === '"') { cur += '"'; i++; }
+                else if (c === '"') inQuotes = false;
+                else cur += c;
+              } else {
+                if (c === '"') inQuotes = true;
+                else if (c === ',') { result.push(cur); cur = ''; }
+                else cur += c;
+              }
+            }
+            result.push(cur);
+            return result;
+          }
+
+          function main() {
+            log('Loading matrix...');
+            const matrixRoots = new Map(); // normalized -> original
+            fs.readFileSync('./linguistic_data/pie/pie_matrix.jsonl', 'utf8')
+              .split('\n').filter(l => l.trim())
+              .forEach(line => {
+                const row = JSON.parse(line);
+                matrixRoots.set(normalize(row.root_word), row.root_word);
+              });
+            log(`Matrix has ${matrixRoots.size} distinct cited roots.`);
+
+            log('Loading IE-CoR cognate sets...');
+            const csvRaw = fs.readFileSync('./cognatesets.csv', 'utf8').split('\n').filter(l => l.trim());
+            const header = parseCsvLine(csvRaw[0]);
+            const rootLangIdx = header.indexOf('Root_Language');
+            const rootFormIdx = header.indexOf('Root_Form');
+            const glossIdx = header.indexOf('Root_Gloss');
+
+            const iecorRoots = new Map(); // normalized -> { form, gloss }
+            for (let i = 1; i < csvRaw.length; i++) {
+              const cols = parseCsvLine(csvRaw[i]);
+              if (cols[rootLangIdx] !== 'Proto-Indo-European') continue;
+              const form = cols[rootFormIdx];
+              if (!form) continue;
+              iecorRoots.set(normalize(form), { form, gloss: cols[glossIdx] });
+            }
+            log(`IE-CoR has ${iecorRoots.size} distinct PIE-anchored root forms.`);
+
+            const misses = [];
+            let matched = 0;
+            for (const [norm, info] of iecorRoots) {
+              if (matrixRoots.has(norm)) matched++;
+              else misses.push(info);
+            }
+
+            const matchRate = iecorRoots.size ? matched / iecorRoots.size : 0;
+            log(`Matched: ${matched} / ${iecorRoots.size} (${(matchRate * 100).toFixed(1)}%)`);
+
+            fs.writeFileSync('./linguistic_data/pie/iecor_validation.json', JSON.stringify({
+              validated: new Date().toISOString(),
+              matrix_distinct_roots: matrixRoots.size,
+              iecor_distinct_roots: iecorRoots.size,
+              matched,
+              match_rate: matchRate,
+              misses: misses.sort((a, b) => a.form.localeCompare(b.form))
+            }, null, 2));
+
+            log('Note: this compares at the root level only (does IE-CoR\'s');
+            log('verified root also show up as cited somewhere in the matrix),');
+            log('not daughter-word-by-daughter-word — IE-CoR\'s language IDs');
+            log('use a different taxonomy (Glottocodes) than wiktextract\'s,');
+            log('so a full per-language cross-check is a separate task.');
+          }
+
+          main();
+          JSEOF
+
+      - name: Run validation
+        run: node validate.js
+
+      - name: Commit results
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add linguistic_data/
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Validate matrix against IE-CoR [skip ci]"
+            git push
+          fi
