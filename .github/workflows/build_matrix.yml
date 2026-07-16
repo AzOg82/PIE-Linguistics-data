@@ -50,52 +50,110 @@ jobs:
           // wiktextract uses. Not exhaustive — covers the branches from the
           // reference chart plus their attested/modern stages. Anything not
           // listed here falls into "Unclassified" rather than being dropped.
+          // Expanded against the actual 373-language distribution from the
+          // real scan output (2026-07-16), not just the reference chart's
+          // top-level list. Genuinely ambiguous/disputed branch assignments
+          // (Venetic, Lusitanian, Messapic — scholarly disagreement on
+          // where they even belong) are deliberately left unmapped rather
+          // than guessed. Non-Indo-European languages that picked up a
+          // stray citation (Finnish, Basque, Hebrew, Turkish, etc.) are
+          // correctly left unmapped too — that's accurate, not a gap.
           const BRANCH_BY_LANG = {
             // Anatolian
             'Hittite': 'Anatolian', 'Luwian': 'Anatolian', 'Lycian': 'Anatolian',
             'Lydian': 'Anatolian', 'Palaic': 'Anatolian', 'Carian': 'Anatolian',
             // Armenian
             'Armenian': 'Armenian', 'Old Armenian': 'Armenian', 'Classical Armenian': 'Armenian',
-            'Western Armenian': 'Armenian', 'Eastern Armenian': 'Armenian',
+            'Western Armenian': 'Armenian', 'Eastern Armenian': 'Armenian', 'Middle Armenian': 'Armenian',
             // Albanian
             'Albanian': 'Albanian', 'Proto-Albanian': 'Albanian',
             // Baltic
             'Lithuanian': 'Baltic', 'Latvian': 'Baltic', 'Old Prussian': 'Baltic',
-            'Proto-Baltic': 'Baltic', 'Proto-Balto-Slavic': 'Baltic',
+            'Proto-Baltic': 'Baltic', 'Proto-Balto-Slavic': 'Baltic', 'Old Lithuanian': 'Baltic',
+            'Samogitian': 'Baltic', 'Latgalian': 'Baltic', 'Sudovian': 'Baltic',
             // Slavic
             'Russian': 'Slavic', 'Polish': 'Slavic', 'Czech': 'Slavic', 'Ukrainian': 'Slavic',
             'Bulgarian': 'Slavic', 'Serbo-Croatian': 'Slavic', 'Slovene': 'Slavic',
             'Old Church Slavonic': 'Slavic', 'Proto-Slavic': 'Slavic', 'Belarusian': 'Slavic',
-            'Macedonian': 'Slavic', 'Slovak': 'Slavic',
+            'Macedonian': 'Slavic', 'Slovak': 'Slavic', 'Old Ruthenian': 'Slavic', 'Lower Sorbian': 'Slavic',
+            'Upper Sorbian': 'Slavic', 'Pannonian Rusyn': 'Slavic', 'Old East Slavic': 'Slavic',
+            'Old Novgorodian': 'Slavic', 'Old Czech': 'Slavic', 'Carpathian Rusyn': 'Slavic',
+            'Kashubian': 'Slavic', 'Polabian': 'Slavic', 'Old Slovak': 'Slavic', 'Old Polish': 'Slavic',
+            'Silesian': 'Slavic', 'Knaanic': 'Slavic',
             // Celtic
             'Old Irish': 'Celtic', 'Irish': 'Celtic', 'Scottish Gaelic': 'Celtic', 'Welsh': 'Celtic',
             'Breton': 'Celtic', 'Cornish': 'Celtic', 'Manx': 'Celtic', 'Gaulish': 'Celtic',
             'Proto-Celtic': 'Celtic', 'Brythonic': 'Celtic', 'Goidelic': 'Celtic',
+            'Proto-Brythonic': 'Celtic', 'Middle Irish': 'Celtic', 'Middle Welsh': 'Celtic',
+            'Classical Gaelic': 'Celtic', 'Old Welsh': 'Celtic', 'Cumbric': 'Celtic', 'Old Cornish': 'Celtic',
+            'Middle Cornish': 'Celtic', 'Primitive Irish': 'Celtic',
             // Germanic
             'English': 'Germanic', 'Old English': 'Germanic', 'Middle English': 'Germanic',
             'German': 'Germanic', 'Old High German': 'Germanic', 'Middle High German': 'Germanic',
             'Dutch': 'Germanic', 'Old Dutch': 'Germanic', 'Middle Dutch': 'Germanic',
             'Swedish': 'Germanic', 'Old Swedish': 'Germanic', 'Danish': 'Germanic', 'Old Danish': 'Germanic',
-            'Norwegian': 'Germanic', 'Icelandic': 'Germanic', 'Old Norse': 'Germanic',
-            'Gothic': 'Germanic', 'Proto-Germanic': 'Germanic', 'Proto-West Germanic': 'Germanic',
-            'Old Frisian': 'Germanic', 'Frisian': 'Germanic', 'Afrikaans': 'Germanic',
-            'Yiddish': 'Germanic', 'Low German': 'Germanic', 'Old Low German': 'Germanic', 'Faroese': 'Germanic',
+            'Norwegian': 'Germanic', 'Norwegian Nynorsk': 'Germanic', 'Norwegian Bokmål': 'Germanic',
+            'Icelandic': 'Germanic', 'Old Norse': 'Germanic', 'Proto-Norse': 'Germanic',
+            'Gothic': 'Germanic', 'Crimean Gothic': 'Germanic', 'Proto-Germanic': 'Germanic',
+            'Proto-West Germanic': 'Germanic', 'Old Frisian': 'Germanic', 'Frisian': 'Germanic',
+            'West Frisian': 'Germanic', 'North Frisian': 'Germanic', 'Saterland Frisian': 'Germanic',
+            'Afrikaans': 'Germanic', 'Yiddish': 'Germanic', 'Low German': 'Germanic',
+            'Old Low German': 'Germanic', 'Old Saxon': 'Germanic', 'Middle Low German': 'Germanic',
+            'Faroese': 'Germanic', 'Limburgish': 'Germanic', 'Cimbrian': 'Germanic', 'Mòcheno': 'Germanic',
+            'Scots': 'Germanic', 'Middle Scots': 'Germanic', 'Luxembourgish': 'Germanic',
+            'Bavarian': 'Germanic', 'Alemannic German': 'Germanic', 'Hunsrik': 'Germanic',
+            'Pennsylvania German': 'Germanic', 'Plautdietsch': 'Germanic', 'East Central German': 'Germanic',
+            'Central Franconian': 'Germanic', 'Rhine Franconian': 'Germanic', 'Vilamovian': 'Germanic',
+            'West Flemish': 'Germanic', 'Volga German': 'Germanic', 'Gottscheerish': 'Germanic',
+            'Elfdalian': 'Germanic', 'Zealandic': 'Germanic', 'Unserdeutsch': 'Germanic',
+            'Jamtish': 'Germanic', 'Old Gutnish': 'Germanic', 'Fala': 'Germanic',
             // Hellenic
             'Greek': 'Hellenic', 'Ancient Greek': 'Hellenic', 'Mycenaean Greek': 'Hellenic',
-            'Proto-Hellenic': 'Hellenic',
+            'Proto-Hellenic': 'Hellenic', 'Cappadocian Greek': 'Hellenic', 'Italiot Greek': 'Hellenic',
             // Indo-Aryan
             'Sanskrit': 'Indo-Aryan', 'Hindi': 'Indo-Aryan', 'Urdu': 'Indo-Aryan', 'Bengali': 'Indo-Aryan',
             'Assamese': 'Indo-Aryan', 'Punjabi': 'Indo-Aryan', 'Marathi': 'Indo-Aryan', 'Nepali': 'Indo-Aryan',
             'Sinhalese': 'Indo-Aryan', 'Romani': 'Indo-Aryan', 'Gujarati': 'Indo-Aryan', 'Sindhi': 'Indo-Aryan',
-            'Dardic': 'Indo-Aryan', 'Dard': 'Indo-Aryan',
+            'Dardic': 'Indo-Aryan', 'Dard': 'Indo-Aryan', 'Prakrit': 'Indo-Aryan', 'Pali': 'Indo-Aryan',
+            'Kashmiri': 'Indo-Aryan', 'Old Marathi': 'Indo-Aryan', 'Konkani': 'Indo-Aryan',
+            'Old Hindi': 'Indo-Aryan', 'Old Gujarati': 'Indo-Aryan', 'Old Punjabi': 'Indo-Aryan',
+            'Saraiki': 'Indo-Aryan', 'Apabhramsa': 'Indo-Aryan', 'Ashokan Prakrit': 'Indo-Aryan',
+            'Old Awadhi': 'Indo-Aryan', 'Awadhi': 'Indo-Aryan', 'Niya Prakrit': 'Indo-Aryan',
+            'Gandhari': 'Indo-Aryan', 'Dhivehi': 'Indo-Aryan', 'Marwari': 'Indo-Aryan', 'Magahi': 'Indo-Aryan',
+            'Odia': 'Indo-Aryan', 'Varhadi': 'Indo-Aryan', 'Gojri': 'Indo-Aryan', 'Malvi': 'Indo-Aryan',
+            'Kachchi': 'Indo-Aryan', 'Middle Bengali': 'Indo-Aryan', 'Pahari-Potwari': 'Indo-Aryan',
+            'Ahirani': 'Indo-Aryan', 'Bhojpuri': 'Indo-Aryan', 'Sylheti': 'Indo-Aryan', 'Nimadi': 'Indo-Aryan',
+            'Chhattisgarhi': 'Indo-Aryan', 'Early Assamese': 'Indo-Aryan', 'Dhundhari': 'Indo-Aryan',
+            'Deccani': 'Indo-Aryan', 'Bundeli': 'Indo-Aryan', 'Varli': 'Indo-Aryan', 'Garhwali': 'Indo-Aryan',
+            'Mewari': 'Indo-Aryan', 'Dogri': 'Indo-Aryan', 'Braj': 'Indo-Aryan', 'Vaghri': 'Indo-Aryan',
+            'Middle Gujarati': 'Indo-Aryan', 'Maithili': 'Indo-Aryan', 'Haryanvi': 'Indo-Aryan',
+            'Kalasha': 'Indo-Aryan', 'Khowar': 'Indo-Aryan',
             // Iranian
             'Avestan': 'Iranian', 'Old Persian': 'Iranian', 'Persian': 'Iranian', 'Kurdish': 'Iranian',
-            'Pashto': 'Iranian', 'Sogdian': 'Iranian', 'Balochi': 'Iranian', 'Proto-Indo-Iranian': 'Iranian',
+            'Northern Kurdish': 'Iranian', 'Central Kurdish': 'Iranian', 'Southern Kurdish': 'Iranian',
+            'Pashto': 'Iranian', 'Sogdian': 'Iranian', 'Balochi': 'Iranian', 'Baluchi': 'Iranian',
+            'Proto-Iranian': 'Iranian', 'Tajik': 'Iranian', 'Middle Persian': 'Iranian', 'Zazaki': 'Iranian',
+            'Ossetian': 'Iranian', 'Old Median': 'Iranian', 'Proto-Scythian': 'Iranian', 'Alanic': 'Iranian',
+            'Judeo-Persian': 'Iranian', 'Mazanderani': 'Iranian', 'Parthian': 'Iranian',
+            'Gurani': 'Iranian', 'Proto-Nuristani': 'Iranian', 'Proto-Saka': 'Iranian',
+            'Khotanese': 'Iranian', 'Tat': 'Iranian', 'Proto-Sogdic': 'Iranian',
+            // Indo-Iranian (pre-split, ancestral to both branches above)
+            'Proto-Indo-Iranian': 'Indo-Iranian',
             // Italic
             'Latin': 'Italic', 'Faliscan': 'Italic', 'Oscan': 'Italic', 'Umbrian': 'Italic',
             'Proto-Italic': 'Italic', 'Spanish': 'Italic', 'French': 'Italic', 'Italian': 'Italic',
             'Portuguese': 'Italic', 'Romanian': 'Italic', 'Catalan': 'Italic', 'Provencal': 'Italic',
-            'Occitan': 'Italic', 'Rhaeto-Romance': 'Italic',
+            'Occitan': 'Italic', 'Old Occitan': 'Italic', 'Rhaeto-Romance': 'Italic', 'Ligurian': 'Italic',
+            'Sardinian': 'Italic', 'Sassarese': 'Italic', 'Gallurese': 'Italic', 'Galician': 'Italic',
+            'Old French': 'Italic', 'Middle French': 'Italic', 'Old Galician-Portuguese': 'Italic',
+            'Sicilian': 'Italic', 'Judeo-Italian': 'Italic', 'Norman': 'Italic', 'Old Spanish': 'Italic',
+            'Aromanian': 'Italic', 'Corsican': 'Italic', 'Venetan': 'Italic', 'Friulian': 'Italic',
+            'Lombard': 'Italic', 'Asturian': 'Italic', 'Ladino': 'Italic', 'Romansh': 'Italic',
+            'Neapolitan': 'Italic', 'Walloon': 'Italic', 'Aragonese': 'Italic', 'Dalmatian': 'Italic',
+            'Megleno-Romanian': 'Italic', 'Extremaduran': 'Italic', 'Emilian': 'Italic', 'Ladin': 'Italic',
+            'Leonese': 'Italic', 'Piedmontese': 'Italic', 'Istriot': 'Italic', 'Gallo': 'Italic',
+            'Mozarabic': 'Italic', 'Marrucinian': 'Italic', 'Paelignian': 'Italic', 'South Picene': 'Italic',
+            'North Picene': 'Italic',
             // Tocharian
             'Tocharian A': 'Tocharian', 'Tocharian B': 'Tocharian', 'Proto-Tocharian': 'Tocharian',
             // Phrygian
