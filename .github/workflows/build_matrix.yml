@@ -1,0 +1,194 @@
+name: Build PIE Matrix
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-matrix:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Create matrix-builder script
+        run: |
+          cat > build_matrix.js << 'JSEOF'
+          const fs = require('fs');
+          const path = require('path');
+          const readline = require('readline');
+
+          const ROOTS_PATH = './linguistic_data/pie/pie_roots.json';
+          const CITATIONS_PATH = './linguistic_data/pie/pie_citations.jsonl';
+          const OUT_DIR = './linguistic_data/pie';
+          const MATRIX_PATH = path.join(OUT_DIR, 'pie_matrix.jsonl');
+          const UNMATCHED_PATH = path.join(OUT_DIR, 'pie_matrix_unmatched.jsonl');
+          const SUMMARY_PATH = path.join(OUT_DIR, 'pie_matrix_summary.json');
+
+          function log(msg) { console.log(`[matrix] ${msg}`); }
+
+          // Same normalize function already used and tested in Root & Gloss.
+          function normalize(str) {
+            return (str || '')
+              .toLowerCase()
+              .normalize('NFD')
+              .replace(/[\u0300-\u036f]/g, '')
+              .replace(/[₀₁₂₃₄₅₆₇₈₉]/g, d => '0123456789'['₀₁₂₃₄₅₆₇₈₉'.indexOf(d)])
+              .replace(/[^a-z0-9\s*-]/g, '')
+              .replace(/[*-]/g, '')
+              .trim();
+          }
+
+          // Hand-built branch lookup, keyed on the exact `lang` name string
+          // wiktextract uses. Not exhaustive — covers the branches from the
+          // reference chart plus their attested/modern stages. Anything not
+          // listed here falls into "Unclassified" rather than being dropped.
+          const BRANCH_BY_LANG = {
+            // Anatolian
+            'Hittite': 'Anatolian', 'Luwian': 'Anatolian', 'Lycian': 'Anatolian',
+            'Lydian': 'Anatolian', 'Palaic': 'Anatolian', 'Carian': 'Anatolian',
+            // Armenian
+            'Armenian': 'Armenian', 'Old Armenian': 'Armenian', 'Classical Armenian': 'Armenian',
+            'Western Armenian': 'Armenian', 'Eastern Armenian': 'Armenian',
+            // Albanian
+            'Albanian': 'Albanian', 'Proto-Albanian': 'Albanian',
+            // Baltic
+            'Lithuanian': 'Baltic', 'Latvian': 'Baltic', 'Old Prussian': 'Baltic',
+            'Proto-Baltic': 'Baltic', 'Proto-Balto-Slavic': 'Baltic',
+            // Slavic
+            'Russian': 'Slavic', 'Polish': 'Slavic', 'Czech': 'Slavic', 'Ukrainian': 'Slavic',
+            'Bulgarian': 'Slavic', 'Serbo-Croatian': 'Slavic', 'Slovene': 'Slavic',
+            'Old Church Slavonic': 'Slavic', 'Proto-Slavic': 'Slavic', 'Belarusian': 'Slavic',
+            'Macedonian': 'Slavic', 'Slovak': 'Slavic',
+            // Celtic
+            'Old Irish': 'Celtic', 'Irish': 'Celtic', 'Scottish Gaelic': 'Celtic', 'Welsh': 'Celtic',
+            'Breton': 'Celtic', 'Cornish': 'Celtic', 'Manx': 'Celtic', 'Gaulish': 'Celtic',
+            'Proto-Celtic': 'Celtic', 'Brythonic': 'Celtic', 'Goidelic': 'Celtic',
+            // Germanic
+            'English': 'Germanic', 'Old English': 'Germanic', 'Middle English': 'Germanic',
+            'German': 'Germanic', 'Old High German': 'Germanic', 'Middle High German': 'Germanic',
+            'Dutch': 'Germanic', 'Old Dutch': 'Germanic', 'Middle Dutch': 'Germanic',
+            'Swedish': 'Germanic', 'Old Swedish': 'Germanic', 'Danish': 'Germanic', 'Old Danish': 'Germanic',
+            'Norwegian': 'Germanic', 'Icelandic': 'Germanic', 'Old Norse': 'Germanic',
+            'Gothic': 'Germanic', 'Proto-Germanic': 'Germanic', 'Proto-West Germanic': 'Germanic',
+            'Old Frisian': 'Germanic', 'Frisian': 'Germanic', 'Afrikaans': 'Germanic',
+            'Yiddish': 'Germanic', 'Low German': 'Germanic', 'Old Low German': 'Germanic', 'Faroese': 'Germanic',
+            // Hellenic
+            'Greek': 'Hellenic', 'Ancient Greek': 'Hellenic', 'Mycenaean Greek': 'Hellenic',
+            'Proto-Hellenic': 'Hellenic',
+            // Indo-Aryan
+            'Sanskrit': 'Indo-Aryan', 'Hindi': 'Indo-Aryan', 'Urdu': 'Indo-Aryan', 'Bengali': 'Indo-Aryan',
+            'Assamese': 'Indo-Aryan', 'Punjabi': 'Indo-Aryan', 'Marathi': 'Indo-Aryan', 'Nepali': 'Indo-Aryan',
+            'Sinhalese': 'Indo-Aryan', 'Romani': 'Indo-Aryan', 'Gujarati': 'Indo-Aryan', 'Sindhi': 'Indo-Aryan',
+            'Dardic': 'Indo-Aryan', 'Dard': 'Indo-Aryan',
+            // Iranian
+            'Avestan': 'Iranian', 'Old Persian': 'Iranian', 'Persian': 'Iranian', 'Kurdish': 'Iranian',
+            'Pashto': 'Iranian', 'Sogdian': 'Iranian', 'Balochi': 'Iranian', 'Proto-Indo-Iranian': 'Iranian',
+            // Italic
+            'Latin': 'Italic', 'Faliscan': 'Italic', 'Oscan': 'Italic', 'Umbrian': 'Italic',
+            'Proto-Italic': 'Italic', 'Spanish': 'Italic', 'French': 'Italic', 'Italian': 'Italic',
+            'Portuguese': 'Italic', 'Romanian': 'Italic', 'Catalan': 'Italic', 'Provencal': 'Italic',
+            'Occitan': 'Italic', 'Rhaeto-Romance': 'Italic',
+            // Tocharian
+            'Tocharian A': 'Tocharian', 'Tocharian B': 'Tocharian', 'Proto-Tocharian': 'Tocharian',
+            // Phrygian
+            'Phrygian': 'Phrygian',
+          };
+
+          function branchFor(lang) {
+            return BRANCH_BY_LANG[lang] || 'Unclassified';
+          }
+
+          async function main() {
+            log('Loading pie_roots.json...');
+            const rootsData = JSON.parse(fs.readFileSync(ROOTS_PATH, 'utf8'));
+
+            // Build root_id assignment + normalized lookup
+            const rootIndex = new Map(); // normalized word -> { root_id, word, glosses }
+            rootsData.entries.forEach((e, i) => {
+              rootIndex.set(normalize(e.word), { root_id: i + 1, word: e.word, glosses: e.glosses || [] });
+            });
+            log(`Indexed ${rootIndex.size} PIE roots.`);
+
+            if (!fs.existsSync(CITATIONS_PATH)) {
+              throw new Error(`${CITATIONS_PATH} not found — run the citation scanner workflow first.`);
+            }
+
+            const matrixOut = fs.createWriteStream(MATRIX_PATH);
+            const unmatchedOut = fs.createWriteStream(UNMATCHED_PATH);
+            const rl = readline.createInterface({
+              input: fs.createReadStream(CITATIONS_PATH),
+              crlfDelay: Infinity
+            });
+
+            let total = 0, matched = 0, unmatched = 0;
+            const branchCounts = {};
+
+            for await (const line of rl) {
+              if (!line.trim()) continue;
+              total++;
+              const citation = JSON.parse(line);
+              const key = normalize(citation.cited_root);
+              const root = rootIndex.get(key);
+              if (!root) {
+                unmatched++;
+                unmatchedOut.write(JSON.stringify(citation) + '\n');
+                continue;
+              }
+              matched++;
+              const branch = branchFor(citation.lang);
+              branchCounts[branch] = (branchCounts[branch] || 0) + 1;
+              matrixOut.write(JSON.stringify({
+                root_id: root.root_id,
+                root_word: root.word,
+                root_glosses: root.glosses,
+                branch,
+                daughter_word: citation.word,
+                lang: citation.lang,
+                lang_code: citation.lang_code
+              }) + '\n');
+            }
+
+            matrixOut.end();
+            unmatchedOut.end();
+
+            log(`Total citations processed: ${total}`);
+            log(`Matched to a known PIE root: ${matched}`);
+            log(`Unmatched (root string not found in pie_roots.json): ${unmatched}`);
+
+            fs.writeFileSync(SUMMARY_PATH, JSON.stringify({
+              built: new Date().toISOString(),
+              total_citations: total,
+              matched,
+              unmatched,
+              match_rate: total ? (matched / total) : 0,
+              by_branch: Object.entries(branchCounts).sort((a, b) => b[1] - a[1])
+            }, null, 2));
+
+            log('Done.');
+          }
+
+          main().catch(e => { console.error('Fatal:', e); process.exit(1); });
+          JSEOF
+
+      - name: Run matrix builder
+        run: node build_matrix.js
+
+      - name: Commit results
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add linguistic_data/
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Build PIE matrix [skip ci]"
+            git push
+          fi
