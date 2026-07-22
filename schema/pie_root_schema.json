@@ -1,0 +1,116 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/AzOg82/PIE-Linguistics-data/schemas/pie_root_schema.json",
+  "title": "PIE Root Cognate & Correspondence Entry",
+  "description": "Schema for a single reconstructed PIE root, its cognate set across daughter languages, positional sound correspondences, and verification metadata.",
+  "type": "object",
+  "required": ["root", "gloss", "verification_tier", "cognate_set", "correspondence_sets", "confidence"],
+  "additionalProperties": false,
+  "properties": {
+    "root": {
+      "type": "string",
+      "description": "Reconstructed PIE root, conventionally starred (e.g. '*ǵʰésr-').",
+      "pattern": "^\\*"
+    },
+    "gloss": {
+      "type": "string",
+      "description": "Short English meaning of the root (e.g. 'hand')."
+    },
+    "verification_tier": {
+      "type": "string",
+      "description": "Which of the three confidence tiers this entry belongs to.",
+      "enum": ["iecor_verified", "wiktionary_cited", "lingrex_suggested"]
+    },
+    "cognate_set": {
+      "type": "array",
+      "description": "Attested forms across daughter languages that make up this cognate set.",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["lang", "form", "ipa", "branch"],
+        "additionalProperties": false,
+        "properties": {
+          "lang": {
+            "type": "string",
+            "description": "ISO 639 or Wiktionary lang_code for the daughter language (e.g. 'en', 'got')."
+          },
+          "form": {
+            "type": "string",
+            "description": "Attested spelling/orthographic form."
+          },
+          "ipa": {
+            "type": "string",
+            "description": "Phonemic/phonetic transcription without brackets (e.g. 'hænd')."
+          },
+          "branch": {
+            "type": "string",
+            "description": "IE subfamily branch.",
+            "enum": ["Germanic", "Italic", "Hellenic", "Indo-Iranian", "Balto-Slavic", "Celtic", "Albanian", "Armenian", "Anatolian", "Tocharian", "Other"]
+          }
+        }
+      }
+    },
+    "correspondence_sets": {
+      "type": "array",
+      "description": "Positional (aligned-slot) sound correspondences across the cognate set. Use 'Ø' as an explicit value where a language has no reflex in that slot, rather than omitting the language key.",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["position", "values"],
+        "additionalProperties": false,
+        "properties": {
+          "position": {
+            "type": "string",
+            "description": "Aligned slot label (e.g. 'onset', 'medial', 'coda', 'stressed_vowel', 'unstressed_ending'). Free text but should be consistent across entries for the same root shape."
+          },
+          "values": {
+            "type": "object",
+            "description": "Map of lang code -> IPA symbol (or 'Ø' for absence) at this position. Keys should match lang codes used in cognate_set.",
+            "minProperties": 1,
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "phonetic_environment": {
+            "type": "string",
+            "description": "Optional conditioning environment that explains why this correspondence differs from others involving the same phoneme (e.g. 'stressed', 'unstressed', 'word-final', 'before_consonant').",
+            "enum": ["stressed", "unstressed", "word-initial", "word-final", "before_consonant", "before_vowel", "intervocalic", "unspecified"]
+          },
+          "note": {
+            "type": "string",
+            "description": "Free-text clarification, e.g. explaining an exception or an ending's grammatical function."
+          }
+        }
+      }
+    },
+    "sound_law_tags": {
+      "type": "array",
+      "description": "References into a separate curated sound-law table (e.g. Grimm's Law, Verner's Law) that license one or more of the correspondence_sets rows above.",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "confidence": {
+      "type": "object",
+      "description": "Provenance and confidence metadata distinguishing gloss-matching from verified etymological descent.",
+      "required": ["source", "cognacy_verified_by", "gloss_match_only"],
+      "additionalProperties": false,
+      "properties": {
+        "source": {
+          "type": "string",
+          "description": "Primary data source for this entry (e.g. 'IE-CoR', 'Wiktionary/kaikki', 'LingRex')."
+        },
+        "cognacy_verified_by": {
+          "type": "string",
+          "description": "Who/what verified that this is genuine shared descent rather than surface resemblance.",
+          "enum": ["human_linguist", "automated_heuristic", "unverified"]
+        },
+        "gloss_match_only": {
+          "type": "boolean",
+          "description": "True if this entry is only a meaning match (gloss overlap) and has NOT been verified as true etymological descent. Must be false for iecor_verified entries."
+        }
+      }
+    }
+  }
+}
