@@ -99,9 +99,21 @@ jobs:
           };
 
           function main() {
-            log('Loading pie_roots.json (primary source, for cross-reference only)...');
+            log('Loading pie_roots.json (primary source, for cross-reference and gloss fallback)...');
             const pieRoots = JSON.parse(fs.readFileSync('./linguistic_data/pie/pie_roots.json', 'utf8'));
             const primaryRoots = new Set(pieRoots.entries.map(e => normalize(e.word)));
+            // normalized root -> first gloss, used ONLY when IE-CoR's own
+            // Root_Gloss is empty. Kept as a separate lookup (not merged
+            // into IE-CoR data) so the two sources never get blended
+            // silently — every output entry is tagged with gloss_source
+            // recording exactly which one it came from.
+            const primaryGlossByRoot = new Map();
+            pieRoots.entries.forEach(e => {
+              const norm = normalize(e.word);
+              if (!primaryGlossByRoot.has(norm) && e.glosses && e.glosses.length) {
+                primaryGlossByRoot.set(norm, e.glosses[0]);
+              }
+            });
             log(`Primary source has ${primaryRoots.size} distinct root forms.`);
 
             log('Loading IE-CoR tables...');
@@ -165,9 +177,25 @@ jobs:
 
               const rootForm = cs.Root_Form.startsWith('*') ? cs.Root_Form : `*${cs.Root_Form}`;
 
+              let gloss, glossSource;
+              if (cs.Root_Gloss && cs.Root_Gloss.trim()) {
+                gloss = cs.Root_Gloss.trim();
+                glossSource = 'iecor';
+              } else {
+                const fallback = primaryGlossByRoot.get(normalize(cs.Root_Form));
+                if (fallback) {
+                  gloss = fallback;
+                  glossSource = 'primary_source_fallback';
+                } else {
+                  gloss = '(gloss not recorded in IE-CoR or primary source)';
+                  glossSource = 'none';
+                }
+              }
+
               output.push({
                 root: rootForm,
-                gloss: cs.Root_Gloss || cs.Description || '(gloss not recorded in IE-CoR)',
+                gloss: gloss,
+                gloss_source: glossSource,
                 verification_tier: 'iecor_verified',
                 cognate_set: cognateSet,
                 correspondence_sets: [
