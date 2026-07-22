@@ -16,6 +16,11 @@
       "type": "string",
       "description": "Short English meaning of the root (e.g. 'hand')."
     },
+    "gloss_source": {
+      "type": "string",
+      "description": "Where the gloss value came from. 'iecor' if IE-CoR's Root_Gloss column had a value; 'primary_source_fallback' if IE-CoR's was empty and this was pulled from pie_roots.json instead; 'none' if neither source had one. Kept separate and explicit so IE-CoR-native and fallback glosses are never silently blended.",
+      "enum": ["iecor", "primary_source_fallback", "none"]
+    },
     "verification_tier": {
       "type": "string",
       "description": "Which of the three confidence tiers this entry belongs to.",
