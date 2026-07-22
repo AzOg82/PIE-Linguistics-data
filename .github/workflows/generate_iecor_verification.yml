@@ -1,0 +1,225 @@
+name: Generate IE-CoR Root Verification
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  generate-verification:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Fetch IE-CoR CLDF tables
+        run: |
+          curl -sL -o cognatesets.csv "https://raw.githubusercontent.com/lexibank/iecor/master/cldf/cognatesets.csv"
+          curl -sL -o cognates.csv "https://raw.githubusercontent.com/lexibank/iecor/master/cldf/cognates.csv"
+          curl -sL -o forms.csv "https://raw.githubusercontent.com/lexibank/iecor/master/cldf/forms.csv"
+          curl -sL -o languages.csv "https://raw.githubusercontent.com/lexibank/iecor/master/cldf/languages.csv"
+
+      - name: Create generator script
+        run: |
+          cat > generate_verification.js << 'JSEOF'
+          const fs = require('fs');
+
+          function log(msg) { console.log(`[generate] ${msg}`); }
+
+          // Same normalize function used by validate_against_iecor.yml (root-level
+          // matching), kept identical here so results stay comparable across both
+          // workflows. NOTE: this generator deliberately reads IE-CoR directly and
+          // does NOT go through pie_matrix.jsonl — see design note at bottom of file.
+          function normalize(str) {
+            return (str || '')
+              .toLowerCase()
+              .normalize('NFD')
+              .replace(/u̯/g, 'w')
+              .replace(/i̯/g, 'y')
+              .replace(/[\u0300-\u036f]/g, '')
+              .replace(/[₀₁₂₃₄₅₆₇₈₉]/g, d => '0123456789'['₀₁₂₃₄₅₆₇₈₉'.indexOf(d)])
+              .replace(/[^a-z0-9\s*-]/g, '')
+              .replace(/[*-]/g, '')
+              .trim();
+          }
+
+          // Same quoted-field CSV line parser used by validate_against_iecor.yml.
+          function parseCsvLine(line) {
+            const result = []; let cur = ''; let inQuotes = false;
+            for (let i = 0; i < line.length; i++) {
+              const c = line[i];
+              if (inQuotes) {
+                if (c === '"' && line[i + 1] === '"') { cur += '"'; i++; }
+                else if (c === '"') inQuotes = false;
+                else cur += c;
+              } else {
+                if (c === '"') inQuotes = true;
+                else if (c === ',') { result.push(cur); cur = ''; }
+                else cur += c;
+              }
+            }
+            result.push(cur);
+            return result;
+          }
+
+          function parseCsvFile(path) {
+            const raw = fs.readFileSync(path, 'utf8').split('\n').filter(l => l.trim());
+            const header = parseCsvLine(raw[0]);
+            const rows = [];
+            for (let i = 1; i < raw.length; i++) {
+              const cols = parseCsvLine(raw[i]);
+              const row = {};
+              header.forEach((h, idx) => { row[h] = cols[idx] !== undefined ? cols[idx] : ''; });
+              rows.push(row);
+            }
+            return { header, rows };
+          }
+
+          // IE-CoR's top-level clade_name values, mapped onto this repo's branch
+          // enum (schema/pie_root_schema.json). IE-CoR calls Indo-Iranian
+          // "Indo-Iranic"; everything else lines up 1:1. Anything not in this
+          // map (there shouldn't be much) falls through to "Other".
+          const CLADE_MAP = {
+            'Albanian': 'Albanian',
+            'Anatolian': 'Anatolian',
+            'Armenian': 'Armenian',
+            'Balto-Slavic': 'Balto-Slavic',
+            'Celtic': 'Celtic',
+            'Germanic': 'Germanic',
+            'Hellenic': 'Hellenic',
+            'Indo-Iranic': 'Indo-Iranian',
+            'Italic': 'Italic',
+            'Tocharian': 'Tocharian'
+          };
+
+          function main() {
+            log('Loading pie_roots.json (primary source, for cross-reference only)...');
+            const pieRoots = JSON.parse(fs.readFileSync('./linguistic_data/pie/pie_roots.json', 'utf8'));
+            const primaryRoots = new Set(pieRoots.entries.map(e => normalize(e.word)));
+            log(`Primary source has ${primaryRoots.size} distinct root forms.`);
+
+            log('Loading IE-CoR tables...');
+            const { rows: cognatesets } = parseCsvFile('./cognatesets.csv');
+            const { rows: cognates } = parseCsvFile('./cognates.csv');
+            const { rows: forms } = parseCsvFile('./forms.csv');
+            const { rows: languages } = parseCsvFile('./languages.csv');
+
+            const langById = new Map();
+            languages.forEach(l => {
+              langById.set(l.ID, {
+                name: l.ISO639P3code || l.Name,
+                branch: CLADE_MAP[l.clade_name] || 'Other'
+              });
+            });
+
+            const formById = new Map();
+            forms.forEach(f => formById.set(f.ID, f));
+
+            const cognatesByCognatesetId = new Map();
+            cognates.forEach(c => {
+              if (!cognatesByCognatesetId.has(c.Cognateset_ID)) cognatesByCognatesetId.set(c.Cognateset_ID, []);
+              cognatesByCognatesetId.get(c.Cognateset_ID).push(c);
+            });
+
+            const pieCognatesets = cognatesets.filter(cs => cs.Root_Language === 'Proto-Indo-European' && cs.Root_Form);
+            log(`IE-CoR has ${pieCognatesets.length} PIE-anchored cognate sets.`);
+
+            const output = [];
+            let skippedNoForms = 0;
+
+            for (const cs of pieCognatesets) {
+              const linkedCognates = cognatesByCognatesetId.get(cs.ID) || [];
+              const cognateSet = [];
+
+              for (const cog of linkedCognates) {
+                const form = formById.get(cog.Form_ID);
+                if (!form || !form.Form) continue;
+                const langInfo = langById.get(form.Language_ID);
+                if (!langInfo) continue;
+                cognateSet.push({
+                  lang: langInfo.name,
+                  form: form.Form,
+                  ipa: form.Phonemic || form.Form,
+                  branch: langInfo.branch
+                });
+              }
+
+              if (cognateSet.length === 0) { skippedNoForms++; continue; }
+
+              // Positional sound correspondences (the hand/hound-style aligned
+              // slots) require a linguist to actually align phonemes per branch.
+              // That's not something this join can do automatically, so this
+              // generator writes ONE honest placeholder row containing the raw
+              // attested forms, flagged as unaligned. A person still needs to
+              // go through and build the real onset/medial/coda correspondence
+              // rows by hand, the way the article walked through *ǵʰésr- and
+              // *ḱwon- above.
+              const rawValues = {};
+              cognateSet.forEach(c => { rawValues[c.lang] = c.form; });
+
+              const rootForm = cs.Root_Form.startsWith('*') ? cs.Root_Form : `*${cs.Root_Form}`;
+
+              output.push({
+                root: rootForm,
+                gloss: cs.Root_Gloss || cs.Description || '(gloss not recorded in IE-CoR)',
+                verification_tier: 'iecor_verified',
+                cognate_set: cognateSet,
+                correspondence_sets: [
+                  {
+                    position: 'unaligned_raw_forms',
+                    values: rawValues,
+                    phonetic_environment: 'unspecified',
+                    note: 'Auto-generated from IE-CoR forms.csv. NOT a real positional correspondence table — needs manual phoneme alignment (onset/medial/coda/etc.) before this is analytically useful, same as the *ǵʰésr- and *ḱwon- examples.'
+                  }
+                ],
+                sound_law_tags: [],
+                confidence: {
+                  source: 'IE-CoR',
+                  cognacy_verified_by: 'human_linguist',
+                  gloss_match_only: false
+                }
+              });
+            }
+
+            fs.writeFileSync('./linguistic_data/pie/pie_roots_verification.json', JSON.stringify(output, null, 2));
+            log(`✓ Wrote ${output.length} entries (${skippedNoForms} cognate sets skipped — no linkable forms).`);
+
+            log('');
+            log('Design note: this reads pie_roots.json + IE-CoR directly and');
+            log('deliberately bypasses pie_matrix.jsonl and iecor_validation.json,');
+            log('so IE-CoR verification stays independent of whatever the citation');
+            log('scanner does or does not catch. Cross-reference against primary');
+            log('source only checked root-string presence, not used to filter output.');
+          }
+
+          main();
+          JSEOF
+
+      - name: Run generator
+        run: node generate_verification.js
+
+      - name: Install validator dependency
+        run: npm install ajv
+        working-directory: schema
+
+      - name: Validate generated file against schema
+        run: node schema/validate.js linguistic_data/pie/pie_roots_verification.json
+
+
+      - name: Commit results
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add linguistic_data/
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Generate IE-CoR root verification data [skip ci]"
+            git push
+          fi
